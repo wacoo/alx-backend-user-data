@@ -20,25 +20,23 @@ import mysql.connector
 from typing import List
 
 
-PII_FIELDS = ('name', 'email', 'phone', 'ssn', 'ip')
+PII_FIELDS = ('name', 'email', 'phone', 'ssn', 'password')
+pat = r'\b{}=.*?{}'
 
 
 def filter_datum(field: List[str], redaction: str, message: str,
                  separator: str) -> str:
     ''' returns log data perosnal data (fields) obfuscated '''
-    return [re.sub(r'\b{}=[\s\S]*?(?={})\b{}'.format(f, separator, separator),
-            '{}={}{}'.format(f, redaction, separator), message) for f in field]
+    return filter(field, redaction, message, separator)
 
 
-def get_logger() -> logging.Logger:
-    ''' return logging logger '''
-    logger = logging.getLogger('user_data')
-    logger.setLevel(logging.INFO)
-    logger.propagete = False
-    stream_handler = logging.StreamHandler()
-    stream_handler.setFormatter(RedactingFormatter(PII_FIELDS))
-    logger.addHandler(stream_handler)
-    return logger
+def filter(field: List[str], redaction: str, message: str,
+           separator: str) -> str:
+    ''' returns log data perosnal data (fields) obfuscated '''
+    for f in field:
+        message = re.sub(pat.format(f, separator),
+                         '{}={}{}'.format(f, redaction, separator), message)
+    return message
 
 
 def get_db() -> mysql.connector:
@@ -56,6 +54,31 @@ def get_db() -> mysql.connector:
     return None
 
 
+def main():
+    '''  '''
+    connection = get_db()
+    query = 'SELECT * FROM users'
+    cursor = connection.cursor()
+    cursor.execute(query)
+
+    result = cursor.fetchall()
+    for line in result:
+        line_lst = []
+        pii = ['name', 'email', 'phone', 'ssn', 'password']
+        line_lst.append('name=' + line[0])
+        line_lst.append('email=' + line[1])
+        line_lst.append('phone=' + line[2])
+        line_lst.append('ssn=' + line[3])
+        line_lst.append('password=' + line[4])
+        line_lst.append('ip=' + line[5])
+        line_lst.append('last_login=' + str(line[6]))
+        line_lst.append('user_agent=' + line[7])
+        line_str = ';'.join(str(fld) for fld in line_lst)
+        logger = get_logger()
+        filtered = filter_datum(pii, '***', line_str + ';', ';')
+        logger.info(filtered)
+
+
 class RedactingFormatter(logging.Formatter):
     """ Redacting Formatter class
         """
@@ -63,7 +86,7 @@ class RedactingFormatter(logging.Formatter):
     FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
     SEPARATOR = ";"
 
-    def __init__(self, fields):
+    def __init__(self, fields: List[str]):
         ''' initialize class '''
         self.FIELDS = fields
         super(RedactingFormatter, self).__init__(self.FORMAT)
@@ -74,3 +97,19 @@ class RedactingFormatter(logging.Formatter):
         filtered = filter_datum(self.FIELDS, self.REDACTION, formatted,
                                 self.SEPARATOR)
         return filtered
+
+
+def get_logger() -> logging.Logger:
+    ''' return logging logger '''
+    logger = logging.getLogger('user_data')
+    logger.setLevel(logging.INFO)
+    logger.propagate = False
+    stream_handler = logging.StreamHandler()
+    formatter = RedactingFormatter(PII_FIELDS)
+    stream_handler.setFormatter(formatter)
+    logger.addHandler(stream_handler)
+    return logger
+
+
+if __name__ == '__main__':
+    main()
