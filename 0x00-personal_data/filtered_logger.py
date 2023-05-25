@@ -26,11 +26,8 @@ PII_FIELDS = ('name', 'email', 'phone', 'ssn', 'ip')
 def filter_datum(field: List[str], redaction: str, message: str,
                  separator: str) -> str:
     ''' returns log data perosnal data (fields) obfuscated '''
-    for f in field:
-        pt_pass = r'\b{}=[\s\S]*?(?={})\b{}'.format(f, separator, separator)
-        replace_pass = '{}={}{}'.format(f, redaction, separator)
-        message = re.sub(pt_pass, replace_pass, message)
-    return message
+    return [re.sub(r'\b{}=[\s\S]*?(?={})\b{}'.format(f, separator, separator),
+            '{}={}{}'.format(f, redaction, separator), message) for f in field]
 
 
 def get_logger() -> logging.Logger:
