@@ -16,7 +16,7 @@ perform the substitution with a single regex.
 import re
 import os
 import logging
-import mysql.connector
+from mysql import connector
 from typing import List
 
 
@@ -32,19 +32,18 @@ def filter_datum(fields: List[str], redaction: str, message: str,
     return message
 
 
-def get_db() -> mysql.connector:
+def get_db() -> connector:
     ''' returns a connector to the database '''
     uname = os.getenv('PERSONAL_DATA_DB_USERNAME', 'root')
     passwd = os.getenv('PERSONAL_DATA_DB_PASSWORD', '')
     host = os.getenv('PERSONAL_DATA_DB_HOST', 'localhost')
     db = os.getenv('PERSONAL_DATA_DB_NAME', '')
-    connection = mysql.connector.connect(
-                                         host=host,
-                                         port=3306,
-                                         database=db,
-                                         user=uname,
-                                         password=passwd)
-    return connection
+    con = connector.connect(
+                            host=host,
+                            database=db,
+                            user=uname,
+                            password=passwd)
+    return con
 
 
 def main():
