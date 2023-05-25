@@ -43,7 +43,10 @@ def get_db() -> connector:
                             database=db,
                             user=uname,
                             password=passwd)
-    return con
+    if con.is_connected():
+        return con
+    else:
+        return none
 
 
 def main():
