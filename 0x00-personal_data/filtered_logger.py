@@ -21,24 +21,14 @@ from typing import List
 
 
 PII_FIELDS = ('name', 'email', 'phone', 'ssn', 'password')
-pat = r'\b{}=.*?{}'
 
 
 def filter_datum(fields: List[str], redaction: str, message: str,
                  separator: str) -> str:
     ''' returns log data perosnal data (fields) obfuscated '''
     for fld in fields:
-        message = re.sub(fld+'=.*?'+separator,
-                         fld+'='+redaction+separator, message)
-    return message
-
-
-def filter(field: List[str], redaction: str, message: str,
-           separator: str) -> str:
-    ''' returns log data perosnal data (fields) obfuscated '''
-    for f in field:
-        message = re.sub(pat.format(f, separator),
-                         '{}={}{}'.format(f, redaction, separator), message)
+        message = re.sub(fld + '=.*?' + separator,
+                         fld + '=' + redaction+separator, message)
     return message
 
 
@@ -52,13 +42,11 @@ def get_db() -> mysql.connector:
                                          database=db,
                                          user=uname,
                                          password=passwd)
-    if connection.is_connected():
-        return connection
-    return None
+    return connection
 
 
 def main():
-    '''  '''
+    ''' displays the log data from db  '''
     connection = get_db()
     query = 'SELECT * FROM users'
     cursor = connection.cursor()
@@ -90,12 +78,12 @@ class RedactingFormatter(logging.Formatter):
     SEPARATOR = ";"
 
     def __init__(self, fields: List[str]):
-        ''' initialize class '''
+        """ initialize class """
         super(RedactingFormatter, self).__init__(self.FORMAT)
         self.fields = fields
 
     def format(self, record: logging.LogRecord) -> str:
-        ''' return formated and filtered log '''
+        """ return formated and filtered log """
         formatted = super(RedactingFormatter, self).format(record)
         filtered = filter_datum(self.fields, self.REDACTION, formatted,
                                 self.SEPARATOR)
