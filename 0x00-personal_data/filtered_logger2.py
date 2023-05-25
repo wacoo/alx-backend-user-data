@@ -24,13 +24,10 @@ PII_FIELDS = ('name', 'email', 'phone', 'ssn', 'password')
 pat = r'\b{}=.*?{}'
 
 
-def filter_datum(fields: List[str], redaction: str, message: str,
+def filter_datum(field: List[str], redaction: str, message: str,
                  separator: str) -> str:
     ''' returns log data perosnal data (fields) obfuscated '''
-    for fld in fields:
-        message = re.sub(fld+'=.*?'+separator,
-                         fld+'='+redaction+separator, message)
-    return message
+    return filter(field, redaction, message, separator)
 
 
 def filter(field: List[str], redaction: str, message: str,
@@ -91,13 +88,13 @@ class RedactingFormatter(logging.Formatter):
 
     def __init__(self, fields: List[str]):
         ''' initialize class '''
+        self.FIELDS = fields
         super(RedactingFormatter, self).__init__(self.FORMAT)
-        self.fields = fields
 
     def format(self, record: logging.LogRecord) -> str:
         ''' return formated and filtered log '''
         formatted = super(RedactingFormatter, self).format(record)
-        filtered = filter_datum(self.fields, self.REDACTION, formatted,
+        filtered = filter_datum(self.FIELDS, self.REDACTION, formatted,
                                 self.SEPARATOR)
         return filtered
 
