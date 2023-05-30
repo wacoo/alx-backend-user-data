@@ -25,13 +25,20 @@ def stats() -> str:
     stats['users'] = User.count()
     return jsonify(stats)
 
+
 @app_views.route('/unauthorized/', strict_slashes=False)
 def raise_unauthorized() -> None:
-    ''' about because of denial of access '''
+    ''' about because of denial of access
+        Return:
+            - Unauthorized error
+    '''
     abort(401)
+
 
 @app_views.route('/forbidden/', strict_slashes=False)
 def forbidden() -> None:
-    ''' raise not enough previlage error with abourt '''
+    ''' raise not enough previlage error with abourt
+        Return:
+            Forbidden error
+    '''
     abort(403)
-
