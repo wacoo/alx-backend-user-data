@@ -48,9 +48,10 @@ def filter():
                 '/api/v1/forbidden/']
     if auth and auth.require_auth(request.path, path_lst):
         header = auth.authorization_header(request)
+        user = auth.current_user(request)
         if header is None:
             abort(401)
-        if auth.current_user(request) is None:
+        if user is None:
             abort(403)
 
 
