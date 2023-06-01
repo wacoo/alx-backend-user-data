@@ -40,22 +40,22 @@ class BasicAuth(Auth):
     def user_object_from_credentials(self, user_email: str, user_pwd:
                                      str) -> TypeVar('User'):
         ''' returns the user object '''
-        if type(user_email) == str or type(user_pwd) == str:
-            usr = ''
-            try:
-                email = {'email': user_email}
-                usr = User.search(email)
-            except Exception:
-                return None
-            if len(usr) <= 0:
-                return None
-            if usr[0].is_valid_password(user_pwd):
-                return usr[0]
+        if type(user_email) != str or type(user_pwd) != str:
+            return None
+        usr = ''
+        try:
+            email = {'email': user_email}
+            usr = User.search(email)
+        except Exception:
+            return None
+        if len(usr) <= 0:
+            return None
+        if usr[0].is_valid_password(user_pwd):
+            return usr[0]
         return None
 
     def current_user(self, request=None) -> TypeVar('User'):
         ''' authenticate user and return user object'''
-        print('Here')
         auth = Auth()
         header = auth.authorization_header(request)
         b64cred = self.extract_base64_authorization_header(header)
@@ -64,4 +64,4 @@ class BasicAuth(Auth):
         email = cred[0]
         pwd = cred[1]
         user = self.user_object_from_credentials(email, pwd)
-        print(user)
+        return user
