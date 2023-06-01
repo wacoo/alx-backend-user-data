@@ -5,6 +5,9 @@ from flask import request
 from typing import List, TypeVar
 
 
+ses_key = getenv('SESSION_NAME')
+
+
 class Auth:
     ''' Auth class that manages API authentication '''
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
@@ -32,6 +35,5 @@ class Auth:
         ''' get session value '''
         if request is None:
             return None
-        ses_key = getenv('SESSION_NAME')
         cookie = request.cookies.get(ses_key)
         return cookie
