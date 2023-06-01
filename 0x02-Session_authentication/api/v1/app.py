@@ -53,13 +53,13 @@ def filter():
         header = auth.authorization_header(request)
         user = auth.current_user(request)
         request.current_user = user
-        if header is None:
-            abort(401)
-        if user is None:
-            abort(403)
         if auth.authorization_header(request)\
                 and auth.session_cookie(request) is None:
             abort(401)
+        '''if header is None:
+            abort(401)'''
+        if user is None:
+            abort(403)
 
 
 if __name__ == "__main__":
