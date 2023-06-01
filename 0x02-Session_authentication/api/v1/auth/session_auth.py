@@ -8,7 +8,7 @@ class SessionAuth(Auth):
     ''' SessionAuth class for session authentication '''
     user_id_by_session_id = {}
 
-    def create_session(self, user_id: str: None) -> str:
+    def create_session(self, user_id: str = None) -> str:
         ''' returns new session id '''
         if user_id is None:
             return None
