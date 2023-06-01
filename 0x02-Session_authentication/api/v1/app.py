@@ -48,7 +48,7 @@ def forbidden(error) -> str:
 def filter():
     ''' filters each request '''
     path_lst = ['/api/v1/status/', '/api/v1/unauthorized/',
-                '/api/v1/forbidden/']
+                '/api/v1/forbidden/', '/api/v1/auth_session/login']
     if auth and auth.require_auth(request.path, path_lst):
         header = auth.authorization_header(request)
         user = auth.current_user(request)
@@ -57,6 +57,9 @@ def filter():
             abort(401)
         if user is None:
             abort(403)
+        if auth.authorization_header(request)\
+                and auth.session_cookie(request) is None:
+            abort(401)
 
 
 if __name__ == "__main__":
