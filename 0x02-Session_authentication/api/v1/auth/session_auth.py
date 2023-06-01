@@ -17,3 +17,11 @@ class SessionAuth(Auth):
         ses_id = str(uuid4())
         SessionAuth.user_id_by_session_id[ses_id] = user_id
         return ses_id
+
+    def user_id_for_session_id(self, session_id: str = None) -> str:
+        ''' returns the user id for given session id '''
+        if session_id is None:
+            return None
+        elif type(session_id) != str:
+            return None
+        return SessionAuth.user_id_by_session_id.get(session_id)
