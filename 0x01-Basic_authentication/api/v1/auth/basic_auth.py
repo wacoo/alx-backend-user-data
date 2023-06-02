@@ -34,8 +34,17 @@ class BasicAuth(Auth):
         decoded = decoded_base64_authorization_header
         if decoded is None or type(decoded) != str or ':' not in decoded:
             return (None, None)
-        cred = decoded.split(':')
-        return (cred[0], cred[1])
+        index = self.get_1st_index_str(decoded, ':')
+        cred1 = decoded[:index]
+        cred2 = decoded[index+1:]
+        return (cred1, cred2)
+
+    def get_1st_index_str(self, string: str, char: str) -> int:
+        ''' return index of first entry '''
+        for i in range(len(string)):
+            if string[i] == char:
+                return i
+        return -1
 
     def user_object_from_credentials(self, user_email: str, user_pwd:
                                      str) -> TypeVar('User'):
