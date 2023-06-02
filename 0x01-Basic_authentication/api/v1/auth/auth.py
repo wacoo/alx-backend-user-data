@@ -8,16 +8,16 @@ class Auth:
     ''' Auth class that manages API authentication '''
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
         ''' requires authentication '''
+        for ep in excluded_paths:
+            if ep.endswith('*') and path.startswith(ep[:-1]):
+                return False
         path_s = path
-        if path is not None and path[-1] != '/':
+        if path is not None and not path.endswith('/'):
             path_s = path + '/'
         if not path or excluded_paths is None or len(excluded_paths) == 0\
                 or (path not in excluded_paths and
                     path_s not in excluded_paths):
             return True
-        for ep in excluded_paths:
-            if ep.endswith('*') and path.startswith(ep[:-1]):
-                return False
         return False
 
     def authorization_header(self, request=None) -> str:
