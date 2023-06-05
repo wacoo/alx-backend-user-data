@@ -10,12 +10,10 @@ from os import getenv
 @app_views.route('/auth_session/login', methods=['POST'], strict_slashes=False)
 def authenticate() -> Tuple[str, int]:
     ''' authenticate user '''
-    print("11111")
     email = request.form.get('email')
     password = request.form.get('password')
     if not email or email == '':
         return jsonify({'error': 'email missing'}), 400
-    print('22222')
     if not password or password == '':
         return jsonify({'error': 'password missing'}), 400
     try:
@@ -23,7 +21,6 @@ def authenticate() -> Tuple[str, int]:
     except Exception:
         error = 'no user found for this email'
         return jsonify({'error': error}), 404
-    print('333333')
     if len(user) <= 0:
         return jsonify({'error': error}), 404
     if users[0].is_valid_password(password):
