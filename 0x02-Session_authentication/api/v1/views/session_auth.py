@@ -31,3 +31,13 @@ def authenticate() -> Tuple[str, int]:
         udata.set_cookie(getenv('SESSION_NAME'), ses_id)
         return udata
     return jsonify({'error': 'wrong password'}), 401
+
+
+@app_views.route('/auth_session/logout', methods=['DELETE'],
+                 strict_slashes=False)
+def logout():
+    ''' delete user session '''
+    success = auth.destroy_session(request)
+    if not success:
+        abort(404)
+    return jsonify({}), 200
