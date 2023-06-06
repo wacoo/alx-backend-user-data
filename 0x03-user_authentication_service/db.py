@@ -39,5 +39,6 @@ class DB:
             self._session.add(user)
             self._session.commit()
         except Exception:
+            self._session.rollback()
             return None
         return user
