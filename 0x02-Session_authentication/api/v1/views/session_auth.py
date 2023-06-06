@@ -5,6 +5,7 @@ from flask import jsonify, request
 from typing import Tuple
 from api.v1.app import auth
 from os import getenv
+from models.user import User
 
 
 @app_views.route('/auth_session/login', methods=['POST'], strict_slashes=False)
@@ -12,14 +13,16 @@ def authenticate() -> Tuple[str, int]:
     ''' authenticate user '''
     email = request.form.get('email')
     password = request.form.get('password')
-    if not email or email == '':
+    user = ''
+    error = 'no user found for this email'
+    if not email or len(email) == 0:
         return jsonify({'error': 'email missing'}), 400
-    if not password or password == '':
+    if not password or len(password) == 0:
         return jsonify({'error': 'password missing'}), 400
     try:
         users = User.search({'email': email})
-    except Exception:
-        error = 'no user found for this email'
+    except Exception as e:
+        print('XXX', e)
         return jsonify({'error': error}), 404
     if len(user) <= 0:
         return jsonify({'error': error}), 404
