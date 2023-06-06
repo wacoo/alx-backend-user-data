@@ -13,7 +13,7 @@ def authenticate() -> Tuple[str, int]:
     ''' authenticate user '''
     email = request.form.get('email')
     password = request.form.get('password')
-    user = ''
+    users = ''
     error = 'no user found for this email'
     if not email or len(email) == 0:
         return jsonify({'error': 'email missing'}), 400
@@ -22,9 +22,8 @@ def authenticate() -> Tuple[str, int]:
     try:
         users = User.search({'email': email})
     except Exception as e:
-        print('XXX', e)
         return jsonify({'error': error}), 404
-    if len(user) <= 0:
+    if len(users) <= 0:
         return jsonify({'error': error}), 404
     if users[0].is_valid_password(password):
         ses_id = auth.create_session(getattr(users[0], 'id'))
