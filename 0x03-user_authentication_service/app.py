@@ -29,7 +29,7 @@ def register_user():
 
 
 @app.route('/sessions', methods=['POST'], strict_slashes=False)
-def login() -> str:
+def login():
     ''' verify user '''
     email = request.form.get('email')
     passwd = request.form.get('password')
@@ -42,7 +42,7 @@ def login() -> str:
 
 
 @app.route('/sessions', methods=['DELETE'], strict_slashes=False)
-def logout() -> None:
+def logout():
     ''' logout user '''
     s_id = request.cookies.get('session_id')
     user = auth.get_user_from_session_id(s_id)
