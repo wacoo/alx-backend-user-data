@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 ''' In this task, you will set up a basic Flask app. '''
 from auth import Auth
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, abort
 
 
 app = Flask(__name__)
+auth = Auth()
 
 
 @app.route('/', strict_slashes=False)
@@ -16,7 +17,6 @@ def home():
 @app.route('/users', methods=['POST'], strict_slashes=False)
 def register_user():
     ''' register user '''
-    auth = Auth()
     email = request.form.get('email')
     passwd = request.form.get('password')
     try:
@@ -26,6 +26,19 @@ def register_user():
     except ValueError:
         json = {'message': 'email already registered'}
         return jsonify(json), 400
+
+
+@app.route('/sessions', methods=['POST'], strict_slashes=False)
+def login():
+    ''' verify user '''
+    email = request.form.get('email')
+    passwd = request.form.get('password')
+    if not auth.valid_login(email, passwd):
+        abort(401)
+    s_id = auth.create_session(email)
+    response = jsonify({'email': email, 'message': 'logged in'})
+    response.set_cookie('session_id', s_id)
+    return response
 
 
 if __name__ == '__main__':

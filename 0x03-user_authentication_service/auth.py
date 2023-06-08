@@ -5,6 +5,7 @@ a password string arguments and returns bytes.
 The returned bytes is a salted hash of the input password, hashed with
 bcrypt.hashpw.
 '''
+from typing import Union
 from uuid import uuid4
 from db import DB
 import bcrypt
@@ -62,8 +63,14 @@ class Auth:
             return s_id
         except NoResultFound:
             return None
-    '''
-            if user is None:
-            hashed = _hash_password(password)
-            self._db.add_user(email, hashed)
-        raise ValueError('User {} already exists'.format(email))'''
+
+    def get_user_from_session_id(self, seesion_id) -> Union[User, None]:
+        ''' return user based on session id '''
+        if sesssion_id is None:
+            return None
+        user = None
+        try:
+            user = self._db.find_user_by(session_id=session_id)
+            return user
+        except NoResultFound:
+            return None
