@@ -45,8 +45,8 @@ def login() -> str:
 @app.route('/sessions', methods=['DELETE'], strict_slashes=False)
 def logout() -> str:
     ''' logout user '''
-    s_id = request.cookies.get('session_id')
-    user = auth.get_user_from_session_id(s_id)
+    sid = request.cookies.get('session_id')
+    user = auth.get_user_from_session_id(sid)
     if user is None:
         abort(403)
     auth.destroy_session(user.id)
@@ -56,8 +56,8 @@ def logout() -> str:
 @app.route('/profile', methods=['GET'], strict_slashes=False)
 def profile() -> str:
     ''' show user profile '''
-    s_id = request.cookies.get('session_id')
-    user = auth.get_user_from_session_id(s_id)
+    sid = request.cookies.get('session_id')
+    user = auth.get_user_from_session_id(sid)
     if user is None:
         abort(403)
     return jsonify({'email': user.email})
@@ -76,6 +76,7 @@ def get_reset_password_token() -> str:
         abort(403)
     return jsonify({'email': email, 'reset_token': token})
 
+
 @app.route('/reset_password', methods=['PUT'], strict_slashes=False)
 def update_password() -> str:
     ''' update user password '''
@@ -86,13 +87,13 @@ def update_password() -> str:
     try:
         auth.update_password(token, n_pass)
         passwd_reset = True
-    except:
+    except ValueError:
         passwd_reset = False
     if not passwd_reset:
         abort(403)
     json = {'email': email, 'message': 'Password updated'}
     return jsonify(json)
 
-"""
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port='5000')
