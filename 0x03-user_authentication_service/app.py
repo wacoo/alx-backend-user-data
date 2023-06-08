@@ -13,7 +13,7 @@ def home() -> str:
     ''' return a json data '''
     return jsonify({'message': 'Bienvenue'})
 
-
+'''
 @app.route('/users', methods=['POST'], strict_slashes=False)
 def register_user() -> str:
     ''' register user '''
@@ -30,15 +30,15 @@ def register_user() -> str:
 
 @app.route('/sessions', methods=['POST'], strict_slashes=False)
 def login() -> str:
-    ''' verify user '''
+    ''' verify if user is authorized '''
     email = request.form.get('email')
     passwd = request.form.get('password')
     if not auth.valid_login(email, passwd):
         abort(401)
-    s_id = auth.create_session(email)
-    response = jsonify({'email': email, 'message': 'logged in'})
-    response.set_cookie('session_id', s_id)
-    return response
+    sid = auth.create_session(email)
+    res = jsonify({'email': email, 'message': 'logged in'})
+    res.set_cookie('session_id', sid)
+    return res
 
 
 @app.route('/sessions', methods=['DELETE'], strict_slashes=False)
@@ -92,6 +92,6 @@ def update_password() -> str:
     json = {'email': email, 'message': 'Password updated'}
     return jsonify(json)
 
-
+'''
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port='5000')

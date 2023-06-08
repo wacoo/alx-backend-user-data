@@ -56,13 +56,14 @@ class Auth:
 
     def create_session(self, email: str) -> str:
         ''' returns new session id '''
+        user = None
         try:
             user = self._db.find_user_by(email=email)
-            s_id = _generate_uuid()
-            self._db.update_user(user.id, session_id=s_id)
-            return s_id
         except NoResultFound:
             return None
+        sid = _generate_uuid()
+        self._db.update_user(user.id, session_id=sid)
+        return sid
 
     def get_user_from_session_id(self, session_id: str) -> Union[User, None]:
         ''' return user based on session id '''
