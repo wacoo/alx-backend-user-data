@@ -13,7 +13,7 @@ def home() -> str:
     ''' return a json data '''
     return jsonify({'message': 'Bienvenue'})
 
-'''
+
 @app.route('/users', methods=['POST'], strict_slashes=False)
 def register_user() -> str:
     ''' register user '''
@@ -41,6 +41,7 @@ def login() -> str:
     return res
 
 
+"""
 @app.route('/sessions', methods=['DELETE'], strict_slashes=False)
 def logout() -> str:
     ''' logout user '''
@@ -92,6 +93,6 @@ def update_password() -> str:
     json = {'email': email, 'message': 'Password updated'}
     return jsonify(json)
 
-'''
+"""
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port='5000')
