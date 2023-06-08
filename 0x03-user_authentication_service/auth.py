@@ -46,11 +46,10 @@ class Auth:
         ''' check if user is valid  '''
         try:
             user = self._db.find_user_by(email=email)
-            if user is None:
-                return False
-            encoded = password.encode('utf-8')
-            result = bcrypt.checkpw(encoded, user.hashed_password)
-            return result
+            if user is not None:
+                encoded = password.encode('utf-8')
+                result = bcrypt.checkpw(encoded, user.hashed_password)
+                return result
         except NoResultFound:
             return False
         return False
