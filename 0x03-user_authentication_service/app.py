@@ -29,7 +29,7 @@ def register_user():
 
 
 @app.route('/sessions', methods=['POST'], strict_slashes=False)
-def login():
+def login() -> str:
     ''' verify user '''
     email = request.form.get('email')
     passwd = request.form.get('password')
