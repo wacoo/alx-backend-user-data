@@ -9,13 +9,13 @@ auth = Auth()
 
 
 @app.route('/', strict_slashes=False)
-def home():
+def home() -> str:
     ''' return a json data '''
     return jsonify({'message': 'Bienvenue'})
 
 
 @app.route('/users', methods=['POST'], strict_slashes=False)
-def register_user():
+def register_user() -> str:
     ''' register user '''
     email = request.form.get('email')
     passwd = request.form.get('password')
@@ -29,7 +29,7 @@ def register_user():
 
 
 @app.route('/sessions', methods=['POST'], strict_slashes=False)
-def login():
+def login() -> str:
     ''' verify user '''
     email = request.form.get('email')
     passwd = request.form.get('password')
@@ -42,7 +42,7 @@ def login():
 
 
 @app.route('/sessions', methods=['DELETE'], strict_slashes=False)
-def logout():
+def logout() -> str:
     ''' logout user '''
     s_id = request.cookies.get('session_id')
     user = auth.get_user_from_session_id(s_id)
@@ -53,7 +53,7 @@ def logout():
 
 
 @app.route('/profile', methods=['GET'], strict_slashes=False)
-def profile():
+def profile() -> str:
     ''' show user profile '''
     s_id = request.cookies.get('session_id')
     user = auth.get_user_from_session_id(s_id)
