@@ -31,6 +31,7 @@ def register_user():
 @app.route('/sessions', methods=['POST'], strict_slashes=False)
 def login() -> str:
     ''' verify user '''
+    auth = Auth()
     email = request.form.get('email')
     passwd = request.form.get('password')
     if not auth.valid_login(email, passwd):
