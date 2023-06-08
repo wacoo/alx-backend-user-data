@@ -54,7 +54,7 @@ class DB:
                 ukey.append(getattr(User, key))
                 uval.append(val)
             else:
-                raise InvalidRequestError
+                raise InvalidRequestError()
         user = self._session.query(User).filter(
                 tuple_(*ukey).in_([tuple(uval)])).first()
         if user is None:
