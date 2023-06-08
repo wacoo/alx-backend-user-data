@@ -5,6 +5,7 @@ a password string arguments and returns bytes.
 The returned bytes is a salted hash of the input password, hashed with
 bcrypt.hashpw.
 '''
+from uuid import uuid4
 from db import DB
 import bcrypt
 from user import User
@@ -16,6 +17,11 @@ def _hash_password(password: str) -> bytes:
     salt = bcrypt.gensalt()
     encoded = password.encode('utf-8')
     return bcrypt.hashpw(encoded, salt)
+
+
+def _generate_uuid() -> str:
+    ''' return a str representation of uuid '''
+    return str(uuid4)
 
 
 class Auth:
@@ -35,15 +41,17 @@ class Auth:
             return user
         raise ValueError('User {} already exists'.format(email))
 
-    """def valid_login(self, email: str, password: str) -> bool:
-        ''' register user to database '''
+    def valid_login(self, email: str, password: str) -> bool:
+        ''' check if user is valid  '''
         try:
             user = self._db.find_user_by(email=email)
+            if user is None:
+                return False
             encoded = password.encode('utf-8')
             result = bcrypt.checkpw(encoded, user.hashed_password)
             return result
         except NoResultFound:
-            return False"""
+            return False
     '''
             if user is None:
             hashed = _hash_password(password)
