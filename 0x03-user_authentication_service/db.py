@@ -45,7 +45,7 @@ class DB:
             return None
         return user
 
-    def find_user_by(self, **kwargs):
+    def find_user_by(self, **kwargs) -> User:
         ''' return the first user data based on input '''
         ukey = []
         uval = []
@@ -60,3 +60,15 @@ class DB:
         if user is None:
             raise NoResultFound()
         return user
+
+    def update_user(self, user_id: int, **kwargs) -> None:
+        ''' updates user data based on give input '''
+        user = {}
+        for key, val in kwargs.items():
+            if hasattr(User, key):
+                user[getattr(User, key)] = val
+            else:
+                raise ValueError()
+            self._session.query(User).filter(User.id == user_id).update(
+                    user, synchronize_session=False)
+            self._session.commit()
