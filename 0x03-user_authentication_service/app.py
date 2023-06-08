@@ -12,12 +12,13 @@ def home():
     ''' return a json data '''
     return jsonify({'message': 'Bienvenue'})
 
+
 @app.route('/users', methods=['POST'], strict_slashes=False)
 def register_user():
     ''' register user '''
     auth = Auth()
     email = request.form.get('email')
-    passwd =  request.form.get('password')
+    passwd = request.form.get('password')
     try:
         user = auth.register_user(email, passwd)
         json = {'email': email, 'message': 'user created'}
@@ -25,6 +26,7 @@ def register_user():
     except ValueError:
         json = {'message': 'email already registered'}
         return jsonify(json), 400
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port='5000')
