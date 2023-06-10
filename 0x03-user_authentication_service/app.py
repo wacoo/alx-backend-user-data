@@ -5,7 +5,8 @@ from flask import Flask, jsonify, request, abort, redirect
 
 
 app = Flask(__name__)
-auth = Auth()
+
+AUTH = Auth()
 
 
 @app.route('/', methods=['GET'], strict_slashes=False)
@@ -20,7 +21,7 @@ def register_user() -> str:
     email = request.form.get('email')
     passwd = request.form.get('password')
     try:
-        user = auth.register_user(email, passwd)
+        user = AUTH.register_user(email, passwd)
         json = {'email': email, 'message': 'user created'}
         return jsonify(json)
     except ValueError:
@@ -33,10 +34,10 @@ def login() -> str:
     ''' verify if user is authorized '''
     email = request.form.get('email')
     passwd = request.form.get('password')
-    if not auth.valid_login(email, passwd):
+    if not AUTH.valid_login(email, passwd):
         abort(401)
 
-    sid = auth.create_session(email)
+    sid = AUTH.create_session(email)
     res = jsonify({'email': email, 'message': 'logged in'})
     res.set_cookie('session_id', sid)
     return res
@@ -46,10 +47,10 @@ def login() -> str:
 def logout() -> str:
     ''' logout user '''
     sid = request.cookies.get('session_id')
-    user = auth.get_user_from_session_id(sid)
+    user = AUTH.get_user_from_session_id(sid)
     if user is None:
         abort(403)
-    auth.destroy_session(user.id)
+    AUTH.destroy_session(user.id)
     return redirect('/')
 
 
@@ -57,7 +58,7 @@ def logout() -> str:
 def profile() -> str:
     ''' show user profile '''
     sid = request.cookies.get('session_id')
-    user = auth.get_user_from_session_id(sid)
+    user = AUTH.get_user_from_session_id(sid)
     if user is None:
         abort(403)
     return jsonify({'email': user.email})
@@ -69,7 +70,7 @@ def get_reset_password_token() -> str:
     email = request.form.get('email')
     token = None
     try:
-        token = auth.get_reset_password_token(email)
+        token = AUTH.get_reset_password_token(email)
     except ValueError:
         token = None
     if token is None:
@@ -85,7 +86,7 @@ def update_password() -> str:
     n_pass = request.form.get('new_password')
     passwd_reset = False
     try:
-        auth.update_password(token, n_pass)
+        AUTH.update_password(token, n_pass)
         passwd_reset = True
     except ValueError:
         passwd_reset = False
