@@ -87,12 +87,12 @@ class Auth:
         try:
             user = self._db.find_user_by(email=email)
             if user is None:
-                raise ValueError
+                raise ValueError()
             token = _generate_uuid()
             self._db.update_user(user.id, reset_token=token)
             return token
         except NoResultFound:
-            raise ValueError
+            raise ValueError()
 
     def update_password(self, reset_token: str, password: str) -> None:
         ''' update password based on reset token given '''
@@ -100,8 +100,8 @@ class Auth:
         try:
             user = self._db.find_user_by(reset_token=reset_token)
         except NoResultFound:
-            raise user - None
+            user = None
         if user is None:
-            raise ValueError
+            raise ValueError()
         hashed = _hash_password(password)
         self._db.update_user(user.id, hashed_password=hashed, reset_token=None)
